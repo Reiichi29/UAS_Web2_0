@@ -70,7 +70,7 @@
         // window.location.href='/?order_by' + $(this).val();
         $.ajax({
             type:'GET',
-            url:'/products',
+            url:'/admin/products',
             data:{
                 order_by: $(this).val(),
             },
@@ -81,7 +81,7 @@
                     if(idx == 0 || idx % 4 == 0){
                         products += '<div class="row mt-4">';
                     }
-                    products += '<div class="col">'+
+                    products += '<div class="col-md-3">'+
                     '<div class="card">'+'<img src="/image_files/'+ product.image_url+'" class="card-img-top" alt="...">'+
                     '<div class="card-body">'+
                         '<h5 class="card-title">'+

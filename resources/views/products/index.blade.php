@@ -1,23 +1,24 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
-    <div class="row-mt-4">
+<div class="row py-3">
         <div class="col-md-4 offset-md-8">
             <div class="form-group">
                 <select id="order_field" class="form-control">
-                    <option value="" disabled selected>Urutkan</option>
+                    <option value=" disabled selected">Urutkan</option>
                     <option value="best_seller">Best Seller</option>
                     <option value="terbaik">Terbaik</option>
                     <option value="termurah">Termurah</option>
                     <option value="termahal">Termahal</option>
                     <option value="terbaru">Terbaru</option>
+                    <option value="view">Jumlah View</option>
                 </select>
             </div>
         </div>
-    </div>
+      </div>
     <div id="product-list">
         @foreach($products as $idx => $product)
-        @if($idx == 0 | $idx % 4 == 0)
+        @if($idx == 0 || $idx % 4 == 0)
         <div class="row mt-4">
             @endif
 
@@ -45,6 +46,7 @@
 
         @endif
         @endforeach
+        {{ $products->links()}}
 
 
 
@@ -67,7 +69,50 @@
                                 if (idx == 0 || idx % 4 == 0) {
                                     products += '<div class="row mt-4">';
                                 }
-                                products += '<div class="col">' +
+                                products += '<div class="col-md-3">' +
+                                    '<div class="card">' + '<img src="/image_files/' + product.image_url + '" class="card-img-top" alt="...">' +
+                                    '<div class="card-body">' +
+                                    '<h5 class="card-title">' +
+                                    '<a href="/products/' + product.id + '">' +
+                                    product.name +
+                                    '</a>' +
+                                    '</h5>' +
+                                    '<p class="card-text">' +
+                                    'Rp. ' + product.price + '.00' +
+                                    '</p>' +
+                                    '<a href="/carts" class="btn btn-primary">Beli</a>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>';
+                                if (idx > 0 && idx % 4 == 3) {
+                                    products += '</div>';
+                                }
+                            });
+                            // update element
+                            $('#product-list').html(products);
+                        },
+                        error: function(data) {
+                            alert('Unable to handle request');
+                        }
+                    });
+                });
+                $('#order_kategori').change(function() {
+                    // window.location.href='/?order_by' + $(this).val();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/products',
+                        data: {
+                            order_by: $(this).val(),
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+                            var products = '';
+                            $.each(data, function(idx, product) {
+                                if (idx == 0 || idx % 4 == 0) {
+                                    products += '<div class="row mt-4">';
+                                }
+                                products += '<div class="col-md-3">' +
                                     '<div class="card">' + '<img src="/image_files/' + product.image_url + '" class="card-img-top" alt="...">' +
                                     '<div class="card-body">' +
                                     '<h5 class="card-title">' +

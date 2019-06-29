@@ -27,20 +27,21 @@ class ProductController extends Controller
     {
       
       if(Auth::check()){
-        $products = DB::table('products')->where('products.user_id', '=', Auth::user()->id)->get();
+        //$products = DB::table('products')->where('products.user_id', '=', Auth::user()->id)->get();
         $productInstance= new Product();
-        $productInstance->orderProducts($request->get('order_by'));
+        $products = $productInstance->orderProducts($request->get('order_by'));
         if($request->ajax()){
             return response()->json($products, 200);
-          
+        
         }
+        
     
         return view('admin.products.index', compact('products'));
-    }
+      }
       
       $images = Image::all();
       return view('image_gallery',['images'=>$images]);
-  }
+    }
 
     /**
      * Show the form for creating a new resource.

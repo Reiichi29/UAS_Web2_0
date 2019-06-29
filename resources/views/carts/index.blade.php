@@ -14,7 +14,9 @@
         <tbody>
           <?php $total= 0 ?>
           @if(session('cart'))
+          
           @foreach(session('cart') as $id =>$product)
+
           <?php $total += $product['price'] * $product['quantity']?>
 
           <tr>

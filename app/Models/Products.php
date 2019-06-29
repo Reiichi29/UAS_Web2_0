@@ -28,7 +28,6 @@ public function productReviews()
     }
 
 public function orderProducts($order_by) {      
-    
         $query = "SELECT * FROM products ORDER BY created_at DESC";
 
 
@@ -44,7 +43,12 @@ public function orderProducts($order_by) {
 
         } else if ($order_by == 'terbaik'){
             
-            $query = "SELECT * FROM products  ORDER BY created_at DESC";
+            $query = "SELECT p.*, oi.rating FROM products  AS p 
+            LEFT JOIN (
+                SELECT product_id, avg(rating) as rating from product_reviews 
+                    GROUP BY product_id 
+                    ) AS oi ON oi.product_id = p.id
+                    ORDER BY oi.rating DESC;";
             
 
         }else if ($order_by == 'termurah') {
@@ -60,6 +64,8 @@ public function orderProducts($order_by) {
             
             $query = "SELECT * FROM products ORDER BY created_at DESC";
           
+        }elseif ($order_by == 'view') {
+            $query = "Select * from products order by view desc";
         }
         
         return DB::select($query);

@@ -35,7 +35,7 @@ Route::name('admin.')->group(function(){
 // Route Just a Products
 Route::get('/products','ProductController@index')->name('products.index');
 Route::get('/products/{id}','ProductController@show')->name('products.show');
-Route::post('/products/{id}', 'ProductController@store')->name('products.store');
+Route::post('/products/review', 'ProductController@store')->name('products.store');
 Route::get('/products/image/{imageName}','ProductController@image')->name('products.image');
 
 // Route Images

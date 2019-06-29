@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
           $table->string('name');
           $table->longText('description');
           $table->integer('price');
+          $table->integer('view')->default(0);
           $table->string('image_url')->default('');
           $table->string('video_url')->default('');
           $table->timestamps();

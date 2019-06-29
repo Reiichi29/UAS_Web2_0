@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Controllers\Controller;
 use App\Models\Products;
 use App\Models\product_reviews;
@@ -23,11 +24,21 @@ class ProductController extends Controller
         if($request->ajax()){
             return response()->json($products, 200);
         }
-      return view('products.index', compact('products'));
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $itemCollection = collect($products);
+        $perPage = 8;
+        $currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->all();
+        $paginatedItems = new LengthAwarePaginator($currentPageItems, count($itemCollection), $perPage);
+        $paginatedItems->setPath($request->url());
+      return view('products.index', ['products' => $paginatedItems]);
   }
 
   public function show($id){
     $product = Products::find($id);
+    // if ($product) {
+      $product->view++;
+      $product->save();
+    // }
     $rating = product_reviews::rating($id);
     $reviews = product_reviews::where('product_id', $id)->get();
     if($product){
@@ -44,20 +55,24 @@ class ProductController extends Controller
   }
   public function store(Request $request)
   {
-      //
-
+      var_dump($request->ajax());
+      die();
       $this->validate(request(),[
           'rating' => 'required',
           'description' => 'required',
       ]);
 
       $rating = new product_reviews();
-      $rating->product_id = $request->post('product_id');
+      $rating->product_id = $request->product_id;
       $rating->user_id = Auth::user()->id;
-      $rating->rating = $request->post('rating');
-      $rating->description = $request->post('description');
+      $rating->rating = $request->rating;
+      $rating->description = $request->description;
       $rating->save();
+      if($request->ajax()){
+        return response()->json($rating, 200);
+      }
 
-      return redirect('/products/{id}')->with('success', 'Produk berhasil di simpan');
+      return redirect(route('product.show', ['id' => $request->product_id]))->with('success', 'Produk berhasil di simpan');
+      //return response()->json($rating, 200);
   }
 }

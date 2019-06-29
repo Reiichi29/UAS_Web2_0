@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{{-- <meta name="_token" content="{{ csrf_token()}}"> --}}
 
 @extends('layouts.app')
 
@@ -60,23 +61,25 @@
                             {!! $product->description !!}
                         </div>
                         <div class="tab-pane fade" role="tabpanel" id="review">
-                            <form action="{{ route('products.store', ['id' => $product->id]) }}" method="POST">
+                            {{-- <form id="form_review" method="post" action="{{ route('products.store', ['id' => $product->id]) }}"> --}}
+                            <form id="form_review" method="post" enctype="multipart/form-data" action="{{ route('products.store') }}">
                                 @csrf
                                 <div class="form-group">
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                    <input type="hidden" name="product_id" id="product_id" value="{{ $product->id }}">
                                     <label>Rating</label><br>
                                     <!-- rating radio -->
-                                    <input type="radio" name="rating" value="1">1 <br>
-                                    <input type="radio" name="rating" value="2">2 <br>
-                                    <input type="radio" name="rating" value="3">3 <br>
-                                    <input type="radio" name="rating" value="4">4 <br>
-                                    <input type="radio" name="rating" value="5">5 <br>
+                                    <input type="radio" name="rating" id="rating" value="1">1 <br>
+                                    <input type="radio" name="rating" id="rating" value="2">2 <br>
+                                    <input type="radio" name="rating" id="rating" value="3">3 <br>
+                                    <input type="radio" name="rating" id="rating" value="4">4 <br>
+                                    <input type="radio" name="rating" id="rating" value="5">5 <br>
                                     <div class="form-group">
                                         <br />
                                         <label>Komentar</label>
+                                        {{-- <input type="text" name="description" id="ckview" class="form-control" rows="3" placeholder="Deskripsi"> --}}
                                         <textarea name="description" class="form-control" rows="3" placeholder="Deskripsi" id="ckview"></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Kirim</button>
+                                    <button type="submit" id="send-form" class="btn btn-primary">Kirim</button>
                                 </div>
                             </form>
                             <div>
@@ -94,8 +97,9 @@
 </div>
 @endsection
 
-<script src="{{ url('plugins\tinymce\jquery.tinymce.min.js') }}"></script>
-<script src="{{ url('plugins\tinymce\tinymce.min.js') }}"></script>
+<script src="{{ asset('plugins\tinymce\jquery.tinymce.min.js') }}"></script>
+<script src="{{ asset('plugins\tinymce\tinymce.min.js') }}"></script>
+<script src="{{ asset('js\jquery\jquery-2.2.4.min.js') }}"></script>
 <style>
     .checked {
         color: orange;
@@ -104,6 +108,64 @@
 <!-- tinymce js -->
 <script>
     tinymce.init({
-        selector: '#ckview'
+        selector: 'ckview'
     });
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#form_review').on('submit', function(e){
+            e.preventDefault();
+
+            var id = $('#product_id').val();
+            var rating = $('rating':checked).val();
+            var description = "test";
+
+            $.ajax({
+                type: "POST",
+                url: "{{ route('products.store') }}",
+                data: new FormData(this),
+                // contentType: false,
+                // cache: false;
+                // processData: false,
+                dataType: "json",
+                success: function (){
+                    //console.log(msg);
+                    window.location.reload();
+                }
+            });
+        });
+        // $('#send-form').click(function(e){
+        //     e.preventDefault();
+        //     var product_id = $('#product_id').val();
+        //     var rating = $('#rating:checked').val();
+        //     var description = "test";
+
+        //     // $.ajaxSetup({
+        //     //     headers: {
+        //     //         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        //     //     }
+        //     // });
+
+        //     $.ajax({
+        //         url: "{{ route('products.store') }}",
+        //         type: "POST",
+        //         data: {
+        //             _token: '{{csrf_token()}}',
+        //             product_id: product_id,
+        //             rating: rating,
+        //             description: description
+        //         },
+        //         // dataType: 'json',
+        //         success: function(response){
+        //             console.log(response);
+        //             window.location.reload();
+        //         },
+        //         error: function(err){
+        //             console.log(product_id);
+        //             console.log(rating);
+        //             console.log(description);
+        //         }
+        //     });
+        // });
+    })
 </script>
